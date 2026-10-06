@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electrical DIC-II MIS App</title>
+<style>
+:root{--blue:#0877bd;--dark:#063d67;--light:#eef6fb;--green:#dcefc8;--ink:#17324d;--muted:#6b7d8f;--white:#fff;--red:#b3261e;--shadow:0 7px 22px rgba(20,55,90,.12)}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f4f7fa;color:var(--ink)}
+.top{height:70px;background:#fff;border-bottom:1px solid #d9e4ec;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:20}.logo{font-weight:900;color:var(--red);font-size:23px}.title{font-size:18px;font-weight:800}.topright{display:flex;gap:8px;align-items:center}
+button,select{font:inherit}button{border:0;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer}.btn{background:var(--blue);color:#fff}.alt{background:#eaf2f8;color:#075b91}.gray{background:#edf0f3;color:#43586a}
+.year{padding:9px 12px;border:1px solid #cbd9e3;border-radius:9px;font-weight:800;background:#fff}
+.wrap{display:flex;min-height:calc(100vh - 70px)}.side{width:280px;background:var(--dark);color:#fff;padding:15px;position:sticky;top:70px;height:calc(100vh - 70px);overflow:auto}.side h3{margin:5px 8px 14px}.side button{width:100%;background:transparent;color:#dceeff;text-align:left;margin:3px 0}.side button:hover,.side button.active{background:#0c609a;color:#fff}
+.main{flex:1;padding:20px;max-width:1550px;margin:auto;width:100%}.page{display:none}.page.active{display:block}
+.hero{background:linear-gradient(135deg,#0b70b3,#074b7d);color:#fff;border-radius:16px;padding:24px;box-shadow:var(--shadow);margin-bottom:18px}.hero h1{margin:0 0 7px;font-size:27px}.hero p{margin:0;opacity:.92}
+.tree{background:#fff;border-radius:15px;padding:20px;box-shadow:var(--shadow);overflow:auto}.tree-title{text-align:center;font-size:22px;font-weight:900;margin-bottom:22px}.root{text-align:center;background:#eaf2f8;border:2px solid #9bc9e5;padding:12px;border-radius:12px;font-weight:900;max-width:360px;margin:auto}.branch{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:28px;position:relative}.branch:before{content:"";position:absolute;top:-14px;left:7%;right:7%;border-top:2px solid #6e9fbd}.unit{position:relative}.unit:before{content:"";position:absolute;top:-15px;left:50%;height:15px;border-left:2px solid #6e9fbd}.unit button{width:100%;background:#f7fbfe;border:1px solid #b9d8e9;color:#064e7c;padding:14px 6px}.subrow{display:flex;gap:10px;justify-content:center;margin-top:30px}.subrow .subunit{background:#fff;border:1px solid #b9d8e9;border-radius:10px;padding:11px 17px;font-weight:800;color:#075b91;cursor:pointer}.hint{margin-top:18px;background:#fff8e8;border-left:4px solid #e4a52c;padding:12px;border-radius:8px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{background:#fff;border-radius:14px;padding:17px;box-shadow:var(--shadow);border:1px solid #e3ebf1}.metric{font-size:27px;font-weight:900;color:#075b91}.small{font-size:12px;color:var(--muted)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.toolbar h2{margin:0}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.reportnav{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:15px 0}.reportnav button{background:#fff;border:1px solid #d8e4ec;box-shadow:var(--shadow);text-align:left;padding:17px}.reportnav strong{display:block;color:#075b91;margin-bottom:5px}
+.tablewrap{overflow:auto;background:#fff;border-radius:14px;box-shadow:var(--shadow)}table{border-collapse:collapse;width:100%;min-width:760px}th{background:var(--blue);color:#fff;padding:10px;font-size:13px}td{padding:9px;border-bottom:1px solid #e4ebf0;text-align:center}tr:nth-child(even){background:#f7fbfe}input{width:100%;min-width:70px;padding:7px;border:1px solid #ccd9e2;border-radius:6px;text-align:right}
+.chart{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:16px;margin-top:15px}.bars{display:flex;align-items:flex-end;gap:9px;height:270px;padding:20px 10px 0;border-bottom:1px solid #b9c8d4;overflow-x:auto}.barcol{min-width:55px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}.bar{width:34px;border-radius:6px 6px 0 0;background:#75a84d;min-height:2px}.barvalue,.barlabel{font-size:10px;margin-top:4px;white-space:nowrap}.barvalue{margin-top:0;margin-bottom:3px}.footer{display:flex;justify-content:space-between;margin-top:17px;gap:8px}
+.badge{display:inline-block;background:#eaf2f8;color:#075b91;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:800}
+.saveinfo{background:#edf8ee;border:1px solid #b8ddb9;color:#27632a;border-radius:10px;padding:10px 12px;margin:12px 0;font-size:13px}
+.history{margin-top:15px;background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:15px}.history h3{margin-top:0}.history ul{margin:8px 0 0;padding-left:20px}.history li{padding:4px 0;color:#526879;font-size:13px}
+@media(max-width:1000px){.branch{grid-template-columns:repeat(4,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.reportnav{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.top .title{display:none}.side{display:none}.main{padding:11px}.branch{grid-template-columns:repeat(2,1fr)}.cards,.reportnav{grid-template-columns:1fr}.subrow{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">JSW</div>
+  <div class="title">Electrical DIC-II MIS — <span id="topUnit">Dashboard</span> — <span id="topYear">2026</span></div>
+  <div class="topright">
+    <select id="year" class="year" onchange="changeYear(this.value)"></select>
+    <button class="btn alt" onclick="home()">Home</button>
+    <button class="btn" onclick="window.print()">Print</button>
+  </div>
+</header>
+
+<div class="wrap">
+<aside class="side">
+  <h3>Sequence</h3>
+  <button id="nav0" onclick="home()">① Electrical DIC-II</button>
+  <button id="nav1" onclick="openUnit('CGL-2')">② Unit / Department</button>
+  <div id="sideReports"></div>
+  <button onclick="openEntry()">⑧ 12-Month Data Entry</button>
+</aside>
+
+<main class="main">
+
+<section class="page active" id="p0">
+  <div class="hero"><h1>Electrical DIC-II</h1><p>JSW-Vasind • Year-wise Electrical MIS Dashboard</p></div>
+  <div class="tree">
+    <div class="tree-title">Click any unit to open its dependent reports</div>
+    <div class="root">JSW-Vasind<br><span class="small">Electrical DIC-II</span></div>
+    <div class="branch">
+      <div class="unit"><button onclick="openUnit('CGL-2')">CGL-2</button></div>
+      <div class="unit"><button onclick="openUnit('PF-1')">PF-1</button></div>
+      <div class="unit"><button onclick="openUnit('PF-2')">PF-2</button></div>
+      <div class="unit"><button onclick="openUnit('CRS-1')">CRS-1</button></div>
+      <div class="unit"><button onclick="openUnit('CRS-2')">CRS-2</button></div>
+      <div class="unit"><button onclick="openUnit('CTL-3')">CTL-3</button></div>
+      <div class="unit"><button onclick="openUnit('M-3')">M-3</button></div>
+      <div class="unit"><button onclick="openUnit('PKL')">PKL</button></div>
+      <div class="unit"><button onclick="openUnit('HRS')">HRS</button></div>
+      <div class="unit"><button onclick="openUnit('ARP')">ARP</button></div>
+    </div>
+    <div class="hint">Year selector se 2026–2035 me koi bhi year select karo. Har unit aur har year ka data alag save rahega.</div>
+  </div>
+</section>
+
+<section class="page" id="p1">
+  <div class="hero"><h1 id="unitTitle">CGL-2</h1><p><span id="unitYear">2026</span> • Monthly Electrical MIS</p></div>
+  <div class="cards">
+    <div class="card"><div class="small">Latest Production</div><div class="metric" id="mProd">—</div><div class="small">Tons</div></div>
+    <div class="card"><div class="small">Latest Delay</div><div class="metric" id="mDelay">—</div><div class="small">%</div></div>
+    <div class="card"><div class="small">Latest Stoppage</div><div class="metric" id="mStop">—</div><div class="small">Nos</div></div>
+    <div class="card"><div class="small">Latest Power</div><div class="metric" id="mPower">—</div><div class="small">kWh/T</div></div>
+  </div>
+  <div class="reportnav">
+    <button onclick="openReport(0)"><strong>1. Delay</strong>Monthly delay trend and norm</button>
+    <button onclick="openReport(1)"><strong>2. Stoppage</strong>Monthly stoppage and downtime</button>
+    <button onclick="openReport(2)"><strong>3. Diversion</strong>Monthly diversion data</button>
+    <button onclick="openReport(3)"><strong>4. Power Consumption</strong>kWh/T monthly trend</button>
+    <button onclick="openReport(4)"><strong>5. Store Consumption</strong>Rs/Mt monthly trend</button>
+  </div>
+  <div class="card"><h3>Unit Sequence</h3><p>Unit select → Delay → Stoppage → Diversion → Power Consumption → Store Consumption. 12-month data entry is available separately.</p></div>
+  <div class="footer"><button class="gray" onclick="home()">← Home</button><button class="btn" onclick="openReport(0)">Next: Delay →</button></div>
+</section>
+
+<section class="page" id="p2">
+  <div class="toolbar"><h2><span id="reportTitle">Delay</span> — <span id="reportUnit">CGL-2</span> <span class="badge" id="reportYear">2026</span></h2><button class="btn alt" onclick="openEntry()">Edit 12-Month Data</button></div>
+  <div class="tablewrap"><table><thead id="reportHead"></thead><tbody id="reportBody"></tbody></table></div>
+  <div class="chart"><h3 id="chartTitle">Monthly Trend</h3><div class="bars" id="chart"></div></div>
+  <div class="footer"><button class="gray" onclick="backUnit()">← Unit</button><button class="btn" onclick="nextReport()">Next →</button></div>
+</section>
+
+<section class="page" id="p3">
+  <div class="toolbar"><h2><span id="entryHeading">12-Month Data Entry</span></h2><div class="actions"><button class="btn" onclick="saveData()">Save</button><button class="alt" onclick="exportCSV()">Export CSV</button><button class="alt" onclick="resetYear()">Reset Year</button></div></div>
+  <div class="hint">Jo data yahan fill karoge wahi Delay, Stoppage, Diversion, Power aur Store Consumption pages par automatically dikhega.</div>
+  <div class="saveinfo" id="saveInfo">Last saved: No save yet</div>
+  <div class="tablewrap"><table><thead><tr><th>Month</th><th>Production (T)</th><th>Delay %</th><th>Stoppage</th><th>Down Time (min)</th><th>Diversion</th><th>Power kWh/T</th><th>Store Rs/Mt</th></tr></thead><tbody id="entryBody"></tbody></table></div>
+  <div class="history" id="historyBox"><h3>Save History</h3><ul id="historyList"><li>No save history yet.</li></ul></div>
+  <div class="footer"><button class="gray" onclick="backUnit()">← Unit</button><button class="btn" onclick="openReport(0)">View Delay →</button></div>
+</section>
+
+</main></div>
+
+
+<script type="module">
+import { saveCloud, listenCloud, isConfigured } from "./firebase-cloud.js";
+
+window.firebaseMIS = {
+  configured: isConfigured(),
+  saveCloud,
+  listenCloud
+};
+</script>
+
+<script>
+const YEARS=Array.from({length:10},(_,i)=>2026+i);
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const UNITS=["CGL-2","PF-1","PF-2","CRS-1","CRS-2","CTL-3","M-3","PKL","HRS","ARP"];
+const KEYS=["prod","delay","stop","down","diversion","power","store"];
+const REF={
+  "Apr":["21407",0.12,2,55,"",84.57,27.85],
+  "May":["20660",1.00,4,0,"",88.25,49.90],
+  "Jun":["20028",0.02,1,0,"",89.09,7.37],
+  "Jul":["19991",0.98,1,0,"",82.05,59.14],
+  "Aug":["22196",0.12,2,55,"",77.89,48.74]
+};
+function blank(){return MONTHS.map(()=>Object.fromEntries(KEYS.map(k=>[k,""])))}
+let db=JSON.parse(localStorage.getItem("dic2_mis_db")||"null");
+if(!db){db={};UNITS.forEach(u=>{db[u]={};YEARS.forEach(y=>db[u][y]=blank())});Object.entries(REF).forEach(([m,row])=>{const i=MONTHS.indexOf(m);db["CGL-2"][2026][i]=Object.fromEntries(KEYS.map((k,j)=>[k,row[j]]));});}
+let audit=JSON.parse(localStorage.getItem("dic2_mis_audit")||"{}");
+let unit=localStorage.getItem("dic2_unit")||"CGL-2";
+let year=Number(localStorage.getItem("dic2_year")||2026);
+let report=0;
+if(!UNITS.includes(unit))unit="CGL-2"; if(!YEARS.includes(year))year=2026;
+
+function D(){return db[unit][year]}
+function fmt(v,d=2){if(v===""||v==null||Number.isNaN(Number(v)))return "—";return Number(v).toLocaleString("en-IN",{maximumFractionDigits:d})}
+function latest(){const d=D();for(let i=11;i>=0;i--)if(Object.values(d[i]).some(v=>v!==""&&v!=null))return i;return 0}
+function month(i){return MONTHS[i]+"-"+String(year).slice(-2)}
+function fillYear(){const s=document.getElementById("year");s.innerHTML=YEARS.map(y=>`<option value="${y}">${y}</option>`).join("");s.value=year}
+function home(){show(0)}
+async function openUnit(u){unit=u;report=0;localStorage.setItem("dic2_unit",unit);show(1);await loadCloudForCurrent()}
+function backUnit(){show(1)}
+function openReport(r){report=r;show(2)}
+function nextReport(){if(report<4){report++;renderReport();}else openEntry()}
+function openEntry(){show(3)}
+async function changeYear(v){year=Number(v);localStorage.setItem("dic2_year",year);render();show(0);await loadCloudForCurrent()}
+function show(n){document.querySelectorAll(".page").forEach((p,i)=>p.classList.toggle("active",i===n));render();window.scrollTo({top:0,behavior:"smooth"})}
+
+function renderSide(){
+  const box=document.getElementById("sideReports");
+  box.innerHTML=`<div style="margin:8px 8px 4px;font-size:11px;color:#a9d4ef;text-transform:uppercase">Reports — ${unit}</div>`+
+    ["Delay","Stoppage","Diversion","Power Consumption","Store Consumption"].map((x,i)=>`<button onclick="openReport(${i})">↳ ${i+1}. ${x}</button>`).join("");
+}
+function renderUnit(){
+  const d=D(),i=latest(),r=d[i];
+  document.getElementById("unitTitle").textContent=unit;
+  document.getElementById("unitYear").textContent=year;
+  document.getElementById("mProd").textContent=fmt(r.prod,0);
+  document.getElementById("mDelay").textContent=r.delay===""?"—":fmt(r.delay)+"%";
+  document.getElementById("mStop").textContent=fmt(r.stop,0);
+  document.getElementById("mPower").textContent=fmt(r.power);
+}
+function renderEntry(){
+  const d=D();
+  document.getElementById("entryHeading").textContent=`${unit} — ${year} — 12-Month Data Entry`;
+  document.getElementById("entryBody").innerHTML=d.map((r,i)=>`<tr><td><b>${month(i)}</b></td>${KEYS.map(k=>`<td><input type="number" step="0.01" value="${r[k]??""}" onchange="D()[${i}].${k}=this.value;saveSilent();render()"></td>`).join("")}</tr>`).join("");
+  const hist=audit[auditKey()]||[];
+  document.getElementById("saveInfo").innerHTML=hist.length
+    ? `<b>Last saved:</b> ${hist[0]} &nbsp; <span class="small">(${unit} / ${year})</span>`
+    : `<b>Last saved:</b> No manual save yet`;
+  document.getElementById("historyList").innerHTML=hist.length
+    ? hist.map((x,i)=>`<li><b>${i===0?"Latest":"Saved"}</b> — ${x}</li>`).join("")
+    : `<li>No manual save history for ${unit} / ${year}.</li>`;
+}
+function reportConfig(){
+  return [
+    {name:"Delay",key:"delay",unit:"%",norm:"0.80",cols:["Month","Delay %","Norm"],rows:r=>[month(r.i),fmt(r.r.delay),r.r.delay===""?"0.80":"0.80"]},
+    {name:"Stoppage",key:"stop",unit:"Nos",norm:"2",cols:["Month","Stoppage","Down Time (min)"],rows:r=>[month(r.i),fmt(r.r.stop,0),fmt(r.r.down,0)]},
+    {name:"Diversion",key:"diversion",unit:"Nos",norm:"",cols:["Month","Diversion"],rows:r=>[month(r.i),fmt(r.r.diversion)]},
+    {name:"Power Consumption",key:"power",unit:"kWh/T",norm:"78.00",cols:["Month","Actual kWh/T","Norm","Production"],rows:r=>[month(r.i),fmt(r.r.power), "78.00", fmt(r.r.prod,0)]},
+    {name:"Store Consumption",key:"store",unit:"Rs/Mt",norm:"66.00",cols:["Month","Actual Rs/Mt","Norm","Production"],rows:r=>[month(r.i),fmt(r.r.store),"66.00",fmt(r.r.prod,0)]}
+  ][report]
+}
+function renderReport(){
+  const c=reportConfig(),d=D();
+  document.getElementById("reportTitle").textContent=c.name;
+  document.getElementById("reportUnit").textContent=unit;
+  document.getElementById("reportYear").textContent=year;
+  document.getElementById("reportHead").innerHTML="<tr>"+c.cols.map(x=>`<th>${x}</th>`).join("")+"</tr>";
+  document.getElementById("reportBody").innerHTML=d.map((r,i)=>"<tr>"+c.rows({r,i}).map(x=>`<td>${x}</td>`).join("")+"</tr>").join("");
+  document.getElementById("chartTitle").textContent=`${c.name} — ${year} Monthly Trend`;
+  const max=c.key==="delay"?1:c.key==="stop"?5:c.key==="diversion"?5:c.key==="power"?100:70;
+  const el=document.getElementById("chart");
+  el.innerHTML=d.map((r,i)=>{const v=Number(r[c.key])||0,h=v?Math.max(2,v/max*200):0;return `<div class="barcol"><div class="barvalue">${v?fmt(v):""}</div><div class="bar" style="height:${h}px"></div><div class="barlabel">${month(i)}</div></div>`}).join("");
+}
+function saveSilent(){db[unit][year]=D();localStorage.setItem("dic2_mis_db",JSON.stringify(db))}
+function auditKey(){return `${unit}__${year}`}
+async function saveData(){
+  saveSilent();
+  const now=new Date();
+  const stamp=now.toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"medium"});
+  const key=auditKey();
+  if(!audit[key]) audit[key]=[];
+  audit[key].unshift(stamp);
+  audit[key]=audit[key].slice(0,20);
+  localStorage.setItem("dic2_mis_audit",JSON.stringify(audit));
+
+  if(window.firebaseMIS && window.firebaseMIS.configured){
+    try{
+      await window.firebaseMIS.saveCloud(unit,year,D(),"JSW Vasind MIS User");
+      render();
+      alert(`${unit} / ${year} data saved to cloud.\\nDate & Time: ${stamp}`);
+    }catch(e){
+      console.error(e);
+      render();
+      alert(`Local save completed, but cloud save failed.\\n${e.message}`);
+    }
+  }else{
+    render();
+    alert(`${unit} / ${year} data saved locally.\\nFirebase config is not filled yet.\\nDate & Time: ${stamp}`);
+  }
+}
+function resetYear(){
+  if(!confirm(`Reset ${unit} ${year} data?`))return;
+  db[unit][year]=blank();
+  saveSilent();
+  const now=new Date();
+  const stamp=now.toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"medium"});
+  const key=auditKey();
+  if(!audit[key]) audit[key]=[];
+  audit[key].unshift(`Reset — ${stamp}`);
+  audit[key]=audit[key].slice(0,20);
+  localStorage.setItem("dic2_mis_audit",JSON.stringify(audit));
+  render();
+}
+function exportCSV(){
+ const d=D(),rows=[["Unit",unit],["Year",year],[],["Month","Production (T)","Delay %","Stoppage","Down Time (min)","Diversion","Power kWh/T","Store Rs/Mt"],...d.map((r,i)=>[month(i),r.prod,r.delay,r.stop,r.down,r.diversion,r.power,r.store])];
+ const csv=rows.map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download=`Electrical_DIC-II_${unit}_${year}.csv`;a.click();URL.revokeObjectURL(a.href);
+}
+
+let cloudUnsubscribe = null;
+async function loadCloudForCurrent(){
+  if(!window.firebaseMIS || !window.firebaseMIS.configured) return;
+  if(cloudUnsubscribe) cloudUnsubscribe();
+  cloudUnsubscribe = window.firebaseMIS.listenCloud(
+    unit, year,
+    data => {
+      if(data && Array.isArray(data.rows)){
+        db[unit][year] = data.rows;
+        localStorage.setItem("dic2_mis_db", JSON.stringify(db));
+        render();
+      }
+    },
+    err => console.error("Firebase listener error:", err)
+  );
+}
+
+function render(){
+ fillYear();renderSide();
+ document.getElementById("topUnit").textContent=unit;
+ document.getElementById("topYear").textContent=year;
+ renderUnit();renderEntry();renderReport();
+}
+render();
+loadCloudForCurrent();
+</script>
+</body></html>
